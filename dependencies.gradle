@@ -1,0 +1,5 @@
+ext {
+    buildScript = [
+        libs.buildscript.kotlin.serialization.get()
+    ]
+}

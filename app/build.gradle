@@ -1,0 +1,72 @@
+plugins {
+    id "io.ktor.plugin"
+    id 'org.jetbrains.kotlin.jvm'
+    id "org.jetbrains.kotlin.plugin.serialization"
+    id 'application'
+}
+
+group = "com.bff.ktor"
+version = "0.0.1"
+
+application {
+    mainClassName 'com.bff.ServerKt'
+}
+
+test {
+    jvmArgs '--enable-preview'
+    useJUnitPlatform()
+}
+
+dependencies {
+    implementation libs.kotlin.stdlib
+    implementation libs.general.logback.classic
+    implementation libs.general.logback.jackson
+    implementation libs.general.logback.json.classic
+    implementation libs.general.koin.ktor
+    implementation libs.general.koin.logger.slf4j
+    implementation libs.kotlin.stdlib.jdk8
+    implementation libs.guava
+    implementation libs.general.kotest.runner.junit5.jvm
+    implementation libs.general.janino
+    implementation libs.general.java.jwt
+    implementation libs.general.retrofit
+    implementation libs.general.converter.gson
+    implementation libs.general.okhttp
+    implementation libs.okhttp3.logging.interceptor
+
+    implementation libs.ktor.server.core
+    implementation libs.ktor.server.netty
+    implementation libs.ktor.client.core
+    implementation libs.ktor.client.cio
+    implementation libs.ktor.client.logging
+    implementation libs.ktor.client.gson
+    implementation libs.ktor.serialization
+    implementation libs.ktor.client.serialization
+    implementation libs.ktor.server.call.logging
+    implementation libs.ktor.server.caching.headers
+    implementation libs.ktor.client.content.negotiation
+    implementation libs.ktor.server.content.negotiation
+    implementation libs.ktor.serialization.kotlinx.json
+
+    implementation libs.ktor.server.tests
+    implementation libs.mockk
+    implementation libs.kotest.runner.junit5
+    implementation libs.kotest.assertions.core
+    implementation libs.kotest.property
+    implementation libs.ktor.server.test.host
+    implementation libs.assertk.jvm
+    implementation libs.mockwebserver
+    implementation libs.ktor.client.mock
+
+    testImplementation libs.junit.jupiter
+    testImplementation libs.mockk
+    testImplementation libs.general.kotest.runner.junit5.jvm
+    testImplementation libs.assertk.jvm
+    testImplementation libs.kotest.runner.junit5
+    testImplementation libs.kotest.assertions.core
+    testImplementation libs.kotest.property
+    testImplementation libs.ktor.server.tests
+    testImplementation libs.ktor.server.test.host
+    testImplementation libs.ktor.client.mock
+    testImplementation libs.mockwebserver
+}

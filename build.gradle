@@ -1,0 +1,105 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import org.codehaus.groovy.runtime.GStringImpl
+import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.MetricType
+import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
+
+buildscript {
+    apply from: 'dependencies.gradle'
+
+    dependencies {
+        buildScript.forEach { v ->
+            classpath v
+        }
+    }
+}
+
+plugins {
+    alias libs.plugins.ktor
+    alias libs.plugins.kotlin.jvm
+    alias libs.plugins.kotlin.serialization
+    alias libs.plugins.detekt
+    alias libs.plugins.kover apply false
+}
+
+application {
+    mainClass.set("io.ktor.server.netty.EngineMain")
+}
+
+clean.doFirst {
+    delete("target")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+subprojects {
+    apply plugin: libs.plugins.detekt.get().pluginId
+    apply plugin: libs.plugins.kover.get().pluginId
+
+    dependencies {
+        detektPlugins libs.detekt.formatting
+    }
+
+    detekt {
+        toolVersion = libs.plugins.detekt.get().version.requiredVersion
+        config = files("${rootProject.rootDir}/config/detekt/detekt.yml")
+        reports {
+            html {
+                required = true
+            }
+        }
+    }
+
+    tasks.withType(Detekt).configureEach {
+        exclude("**/**Test.kt", "**/**Spec.kt")
+    }
+
+    koverReport {
+        def koverExcludes = [
+                "*.di.*",
+                "*.domain.*",
+                "*.model.*",
+                "*.BuildConfig",
+                "*GeneratedInjector",
+                "*Application*",
+                "*ComposableSingletons\$*",]
+
+        // filters for all reports of `release` build variant
+        defaults {
+            filters {
+                excludes {
+                    // excludes class by fully-qualified JVM class name, wildcards '*' and '?' are available
+                    classes(koverExcludes)
+                }
+            }
+            // configure verification for `release` build variant (task `koverVerifyRelease`)
+            verify {
+                onCheck = true
+                // add verification rule
+                rule {
+                    // specify the code unit for which coverage will be aggregated
+                    entity = GroupingEntityType.APPLICATION
+                    // overriding filters only for current rule
+                    filters {
+                        excludes {
+                            classes(koverExcludes)
+                        }
+                    }
+                    // specify verification bound for this rule
+                    bound {
+                        minValue = 6
+                        maxValue = 100
+                        metric = MetricType.INSTRUCTION
+                        aggregation = AggregationType.COVERED_PERCENTAGE
+                    }
+                    // percentage of covered lines
+                    minBound(10)
+                    // percentage of covered lines
+                    maxBound(100)
+                }
+            }
+        }
+    }
+}
