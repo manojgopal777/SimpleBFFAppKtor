@@ -1,6 +1,12 @@
 # SimpleBFFAppKtor
 A Ktor Skeleton for BFF Project
 
+## Requirements
+
+* JDK 17
+* IntelliJ CE
+* Chrome
+
 ## Run 
 
 Once Synced, right click on Server.Kt and 'Run'.
